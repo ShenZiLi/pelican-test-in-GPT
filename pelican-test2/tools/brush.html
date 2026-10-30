@@ -1,0 +1,3 @@
+<!doctype html><meta charset="utf-8"><script src="/node_modules/p5/lib/p5.min.js"></script><script src="/node_modules/p5.brush/dist/p5.brush.js"></script><script>
+window.atlasReady=new Promise((resolve,reject)=>{new p5(p=>{brush.instance(p);p.setup=()=>{p.pixelDensity(1);p.createCanvas(1000,1000,p.WEBGL);p.noLoop();};p.draw=()=>{try{p.background('#f0eadc');p.randomSeed(901);p.noiseSeed(901);brush.noFill();brush.noHatch();brush.noField();for(let i=0;i<20;i++){brush.set(i%2?'HB':'charcoal',i%3?'#323b2b':'#75694e',1+i%4*.5);brush.line(-460,-460+i*48,460,-450+i*48);}resolve();}catch(e){reject(e);}};});});
+</script>

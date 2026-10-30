@@ -1,0 +1,3 @@
+import fs from 'node:fs/promises';import path from 'node:path';
+let chars='';async function walk(dir){for(const e of await fs.readdir(dir,{withFileTypes:true})){const file=path.join(dir,e.name);if(e.isDirectory())await walk(file);else if(e.name.endsWith('.js'))chars+=await fs.readFile(file,'utf8');}}
+await walk('src');const latin=Array.from({length:360},(_,i)=>String.fromCharCode(32+i)).join('');const glyphs=[...new Set((chars.match(/[\u3400-\u9fff\u3000-\u303f\uff00-\uffef]/g)||[]).concat([...latin]))].join('');await fs.mkdir('public',{recursive:true});await fs.writeFile('public/glyphs.txt',glyphs);console.log(`Preload coverage: ${glyphs.length} glyphs.`);

@@ -1,0 +1,24 @@
+{
+  "name": "the-pelican-test",
+  "version": "0.1.0",
+  "private": true,
+  "engines": { "node": ">=20.3.0" },
+  "type": "module",
+  "description": "An original, deterministic, twenty-era cycling pelican film",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "capture": "node tools/capture.mjs",
+    "render": "node tools/render.mjs",
+    "audio": "node tools/audio.mjs"
+  },
+  "dependencies": {
+    "@fontsource/noto-serif-sc": "5.3.1",
+    "p5": "2.3.4",
+    "p5.brush": "2.2.3"
+  },
+  "devDependencies": {
+    "puppeteer": "24.43.1",
+    "sharp": "0.34.5"
+  }
+}

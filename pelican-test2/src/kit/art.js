@@ -1,0 +1,12 @@
+import { randomAt } from './random.js';
+let brushAtlas;
+export const configureBrushAtlas=image=>{brushAtlas=image;};
+export function makeSurface(w=1000,h=1000){const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;return{canvas,ctx:canvas.getContext('2d',{willReadFrequently:true})};}
+export function rng(seed){let i=0;return()=>randomAt(seed,i++);}
+export function poly(c,points,fill,outline=null,width=1){c.save();c.beginPath();for(let i=0;i<points.length;i++)c[i?'lineTo':'moveTo'](...points[i]);c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(outline){c.strokeStyle=outline;c.lineWidth=width;c.stroke();}c.restore();}
+export function stroke(c,points,color,width=1,alpha=1){c.save();c.globalAlpha*=alpha;c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.beginPath();points.forEach((p,i)=>c[i?'lineTo':'moveTo'](...p));c.stroke();c.restore();}
+export function ellipse(c,x,y,rx,ry,fill,outline=null,width=1){c.save();c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);if(fill){c.fillStyle=fill;c.fill();}if(outline){c.strokeStyle=outline;c.lineWidth=width;c.stroke();}c.restore();}
+export function wash(c,points,color,alpha=.1,seed=1){const random=rng(seed);c.save();c.globalAlpha*=alpha/4;for(let j=0;j<7;j++)poly(c,points.map(([x,y])=>[x+(random()-.5)*8,y+(random()-.5)*8]),color);c.restore();}
+export function dryStroke(c,points,color,width=2,seed=1){const random=rng(seed);c.save();for(let j=0;j<Math.min(12,Math.ceil(width*2+3));j++){const off=(random()-.5)*width;stroke(c,points.map(([x,y],i)=>[x+off+(randomAt(seed+j,i)-.5)*.5,y+off]),color,.25+random()*.6,.18+random()*.32);}if(brushAtlas&&width>=1){c.globalCompositeOperation='multiply';c.globalAlpha*=.13;for(let i=1;i<points.length;i++){const[a,b]=[points[i-1],points[i]],len=Math.hypot(b[0]-a[0],b[1]-a[1]);if(len<2)continue;c.save();c.translate(...a);c.rotate(Math.atan2(b[1]-a[1],b[0]-a[0]));c.drawImage(brushAtlas,25,34+(Math.abs(seed)%20)*48,940,12,0,-width,len,width*2);c.restore();}}c.restore();}
+export function grain(c,seed,count=3000,color='#342817'){const random=rng(seed);c.save();c.fillStyle=color;for(let i=0;i<count;i++){c.globalAlpha=.015+random()*.07;c.fillRect(random()*1000,random()*1000,.3+random()*1.7,.3+random()*.9);}c.restore();}
+export function path(c,draw,fill=null,outline=null,width=1){c.save();c.beginPath();draw(c);if(fill){c.fillStyle=fill;c.fill();}if(outline){c.strokeStyle=outline;c.lineWidth=width;c.stroke();}c.restore();}

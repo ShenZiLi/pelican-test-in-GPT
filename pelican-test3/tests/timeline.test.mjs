@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {locate,isDownbeat,sceneStart,quantize} from '../src/beat/index.js';import {pose} from '../src/rig/index.js';
+test('all 20 boundaries land on downbeats with stable ownership',()=>{for(let i=0;i<20;i++){let t=sceneStart(i);assert.ok(isDownbeat(t));assert.equal(locate(t).index,i);assert.equal(locate(t+5.999).index,i)}assert.equal(locate(125).kind,'outro');assert.equal(locate(137).u,12);assert.equal(locate(0).kind,'intro')});
+test('feet stay attached to the crank and repeat once per second',()=>{for(let t=0;t<137;t+=.137){let p=pose(t);for(const f of p.feet)assert.ok(Math.abs(Math.hypot(f.x+12,f.y+94)-39)<1e-9);assert.ok(Math.abs(p.feet[0].x-pose(t+1).feet[0].x)<1e-9)}});
+test('retro update rate does not alter absolute timeline',()=>{assert.equal(quantize(2.049),2);assert.equal(quantize(2.11),2.1);assert.equal(locate(-3).u,0);assert.equal(locate(200).u,12)});

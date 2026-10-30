@@ -1,0 +1,18 @@
+import fs from 'node:fs/promises';import path from 'node:path';import crypto from 'node:crypto';import {spawn} from 'node:child_process';
+const out='exports/delivery',name='The_Pelican_Test_Gallery_v2_1920x840.mp4',movie=path.join(out,name);
+const run=(program,args)=>new Promise((resolve,reject)=>{const cp=spawn(program,args,{windowsHide:true});let stdout='',stderr='';cp.stdout.on('data',b=>stdout+=b);cp.stderr.on('data',b=>stderr+=b);cp.on('error',reject);cp.on('exit',code=>code===0?resolve({stdout,stderr}):reject(Error(`${program}: ${stderr.slice(-3000)}`)));});
+await fs.mkdir(out,{recursive:true});await fs.copyFile('exports/gallery-v2-final/gallery-v2-final.mp4',movie);
+const probe=JSON.parse((await run('ffprobe',['-v','error','-count_frames','-show_streams','-show_format','-of','json',movie])).stdout);
+const video=probe.streams.filter(s=>s.codec_type==='video'),audio=probe.streams.filter(s=>s.codec_type==='audio');
+if(video.length!==1||audio.length!==1||video[0].width!==1920||video[0].height!==840||video[0].avg_frame_rate!=='60/1'||Number(video[0].nb_read_frames)!==8220||audio[0].sample_rate!=='48000'||audio[0].channels!==2||Math.abs(Number(probe.format.duration)-137)>.017)throw Error('Unexpected V2 media format');
+const decode=await run('ffmpeg',['-v','error','-i',movie,'-f','null','-']);if(decode.stderr.trim())throw Error(decode.stderr);
+const loudness=await run('ffmpeg',['-hide_banner','-i',movie,'-af','ebur128=peak=true','-f','null','-']);
+const summary=loudness.stderr.slice(loudness.stderr.lastIndexOf('Summary:'));
+const peak=Number(summary.match(/Peak:\s*([-\d.]+)\s*dBFS/)?.[1]);if(!Number.isFinite(peak)||peak>0)throw Error('Invalid or clipped true peak');
+const before=JSON.parse(await fs.readFile('exports/revision-v2/baseline.json','utf8'));
+const hash=async file=>crypto.createHash('sha256').update(await fs.readFile(file)).digest('hex');
+if(await hash(before.source)!==before.sha256)throw Error('Original movie changed');
+const report={movie:path.resolve(movie),sha256:await hash(movie),bytes:(await fs.stat(movie)).size,resolution:[1920,840],fps:60,frames:8220,duration:137,audio:{codec:audio[0].codec_name,sampleRate:48000,channels:2,truePeakDbFS:peak,loudnessSummary:summary},fullDecodeErrors:[],originalPreserved:true,originalSha256:before.sha256,probe};
+await fs.writeFile(path.join(out,'acceptance-v2.json'),JSON.stringify(report,null,2));
+await fs.writeFile(path.join(out,'SHA256SUMS-v2.txt'),`${report.sha256}  ${name}\n`);
+console.log(JSON.stringify({movie:report.movie,resolution:report.resolution,frames:report.frames,seconds:report.duration,bytes:report.bytes,peak,originalPreserved:true},null,2));

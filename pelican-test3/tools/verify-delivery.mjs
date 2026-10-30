@@ -1,0 +1,12 @@
+import {execFileSync} from 'node:child_process';
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+const file='out/pelican-test3.mp4';
+const probe=JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',file],{encoding:'utf8',windowsHide:true}));
+const video=probe.streams.find(s=>s.codec_type==='video'),audio=probe.streams.find(s=>s.codec_type==='audio');
+assert.equal(video.width,1920);assert.equal(video.height,1080);assert.equal(video.r_frame_rate,'60/1');assert.equal(Number(video.nb_frames),8220);assert.equal(video.codec_name,'h264');assert.equal(audio.codec_name,'aac');assert.equal(audio.channels,2);assert.equal(Number(audio.sample_rate),48000);assert.ok(Math.abs(Number(probe.format.duration)-137)<.05);
+execFileSync('ffmpeg',['-v','error','-i',file,'-f','null','-'],{stdio:['ignore','ignore','pipe'],windowsHide:true});
+const hash=createHash('sha256').update(await readFile(file)).digest('hex');
+const report={file,sha256:hash,width:video.width,height:video.height,fps:60,frames:Number(video.nb_frames),duration:Number(probe.format.duration),video:video.codec_name,audio:audio.codec_name,sampleRate:Number(audio.sample_rate),channels:audio.channels,fullDecode:'passed'};
+await writeFile('out/delivery-report.json',JSON.stringify(report,null,2));console.log(report);

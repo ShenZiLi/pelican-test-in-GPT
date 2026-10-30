@@ -1,0 +1,13 @@
+function knob(c,x,y,r,a){c.fillStyle='#19231e';c.strokeStyle='#8b9a89';c.lineWidth=3;c.beginPath();c.arc(x,y,r,0,7);c.fill();c.stroke();c.strokeStyle='#d5debe';c.beginPath();c.moveTo(x+Math.cos(a)*r*.48,y+Math.sin(a)*r*.48);c.lineTo(x+Math.cos(a)*r*.87,y+Math.sin(a)*r*.87);c.stroke();}
+function hand(c,x,y,angle){c.save();c.translate(x,y);c.rotate(angle);c.fillStyle='#c4b69a';c.strokeStyle='#766f58';c.lineWidth=3;c.beginPath();c.moveTo(190,98);c.lineTo(64,37);c.bezierCurveTo(40,51,15,43,3,18);c.bezierCurveTo(-14,-5,-12,-28,1,-31);c.bezierCurveTo(15,-34,20,-15,19,1);c.lineTo(40,8);c.bezierCurveTo(28,-35,21,-59,34,-64);c.bezierCurveTo(52,-69,64,-16,71,-3);c.lineTo(200,23);c.closePath();c.fill();c.stroke();c.restore();}
+export function draw(c,u,e){c.fillStyle='#26392f';c.fillRect(0,0,e.W,1000);c.fillStyle='#3d5142';c.fillRect(32,27,1714,946);c.strokeStyle='#9baf8b';c.lineWidth=2;c.strokeRect(46,41,1686,918);for(let x of [68,1710])for(let y of [65,935]){knob(c,x,y,9,.6);}
+ c.fillStyle='#b5c0a0';c.font='22px monospace';c.fillText('FIELD INSTRUMENT  •  P-20',1290,264);c.fillText('HORIZONTAL',1390,405);c.fillText('PHASE',1433,565);c.fillText('GAIN',1435,813);c.fillText('X / Y',136,838);
+ knob(c,1480,458,46,-.6);knob(c,1480,638,57,u>=2.5&&u<3?2.8:-1.2);knob(c,1480,873,37,.5);for(let i=0;i<9;i++){c.fillStyle='#1c2a22';c.fillRect(1350+i*35,318,17,7);}
+ c.fillStyle='#0a1b11';c.strokeStyle='#b0bd92';c.lineWidth=13;c.beginPath();c.arc(850,535,434,0,7);c.fill();c.stroke();c.save();c.beginPath();c.arc(850,535,425,0,7);c.clip();
+ c.strokeStyle='#315736';c.lineWidth=1;for(let i=-5;i<6;i++){c.beginPath();c.moveTo(425,535+i*70);c.lineTo(1275,535+i*70);c.stroke();c.beginPath();c.moveTo(850+i*70,110);c.lineTo(850+i*70,960);c.stroke();}
+ c.strokeStyle='#619660';c.setLineDash([3,8]);c.beginPath();c.moveTo(425,535);c.lineTo(1275,535);c.moveTo(850,110);c.lineTo(850,960);c.stroke();c.setLineDash([]);
+ const glitch=u>=2.5&&u<3;for(let k=5;k>=0;k--){c.save();c.globalAlpha=k===0?1:.045*(6-k);c.translate(-k*2,Math.sin(e.t*71-k)*.8);if(glitch){c.strokeStyle='#90ff99';c.shadowColor='#68ff7a';c.shadowBlur=12;c.lineWidth=2;c.beginPath();for(let j=0;j<=700;j++){const a=j/700*Math.PI*2,x=850+260*Math.sin(3*a+u*9),y=540+240*Math.sin(4*a+u*3);j?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();}else e.rig(c,850,780,1,e.t-k*.035,{ink:'#91ff9e',bike:'#91ff9e',mode:'neon',lineWidth:2});c.restore();}
+ c.fillStyle='#92ff9b0a';for(let y=110;y<960;y+=4)c.fillRect(425,y,850,1);c.restore();
+ if(u>1.8&&u<3.4)hand(c,1480,638,Math.sin(u*2)*.06);c.fillStyle='#b9c5a1';c.font='18px monospace';c.fillText('TRACE: PELICAN / CYCLE',685,911);
+}
+

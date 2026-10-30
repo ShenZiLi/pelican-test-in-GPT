@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>鹈鹕测试2 · 一条路，二十种画风</title>
+  <link rel="stylesheet" href="/node_modules/@fontsource/noto-serif-sc/400.css">
+  <link rel="stylesheet" href="/node_modules/@fontsource/noto-serif-sc/700.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <header class="page-header"><div><span class="eyebrow">THE PELICAN TEST II</span><h1>鹈鹕测试2</h1></div><p>一部骑行艺术史 <span>2 分 17 秒</span></p></header>
+    <div id="film-stage" aria-label="鹈鹕测试2影片画面"></div>
+    <section class="player" aria-label="播放控制">
+      <div class="control-row"><button id="play-toggle" type="button" disabled>播放</button><output id="time-display">00:00 / 02:17</output><span id="scene-name" aria-live="polite">序言</span><span class="silent-note">原创合成配乐</span></div>
+      <label class="sr-only" for="seek">影片进度</label><input id="seek" type="range" min="0" max="137" step="0.01" value="0" disabled>
+      <nav id="chapters" aria-label="跳转章节"></nav>
+    </section>
+    <footer><span>一条路，二十种画风。</span><span>原创画面 · 原创旋律 · 一位尚未发表评论的鹈鹕</span></footer>
+    <p id="error" role="alert" hidden></p>
+  </main>
+  <script src="/node_modules/p5/lib/p5.min.js"></script>
+  <script src="/node_modules/p5.brush/dist/p5.brush.js"></script>
+  <script type="module" src="/src/main/player.js"></script>
+</body>
+</html>

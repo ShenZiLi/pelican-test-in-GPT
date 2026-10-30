@@ -1,0 +1,3 @@
+import {pedalAngle} from '../beat/timeline.js';
+export function solveLeg(hip,foot,a=59,b=57){const dx=foot.x-hip.x,dy=foot.y-hip.y;const d=Math.hypot(dx,dy);const along=(a*a-b*b+d*d)/(2*d);const h=Math.sqrt(Math.max(0,a*a-along*along));return {x:hip.x+along*dx/d-h*dy/d,y:hip.y+along*dy/d+h*dx/d};}
+export function poseAt(t){const angle=pedalAngle(t),crank={x:-8,y:-71},hip={x:-39,y:-181},crankRadius=25,legLengths=[74,72];const feet=[0,Math.PI].map(a=>({x:crank.x+Math.cos(angle+a)*crankRadius,y:crank.y+Math.sin(angle+a)*crankRadius}));return {angle,crank,crankRadius,hip,feet,legLengths,knees:feet.map(f=>solveLeg(hip,f,...legLengths)),wheelAngle:t*105/62,bob:Math.sin(angle*2)*1.8};}

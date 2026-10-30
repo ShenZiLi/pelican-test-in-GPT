@@ -1,0 +1,6 @@
+import puppeteer from 'puppeteer-core';
+import {existsSync,readdirSync} from 'node:fs';
+import path from 'node:path';
+export function executable(){if(process.env.CHROME_PATH&&existsSync(process.env.CHROME_PATH))return process.env.CHROME_PATH;const cache=path.join(process.env.USERPROFILE||process.env.HOME,'.cache/puppeteer/chrome');if(existsSync(cache)){for(const v of readdirSync(cache).sort().reverse()){const exe=path.join(cache,v,'chrome-win64/chrome.exe');if(existsSync(exe))return exe;}}for(const exe of ['C:/Program Files/Google/Chrome/Application/chrome.exe','C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'])if(existsSync(exe))return exe;throw Error('Set CHROME_PATH to a Chrome executable');}
+export async function browser(){return puppeteer.launch({executablePath:executable(),headless:true,protocolTimeout:600000,args:['--disable-accelerated-2d-canvas','--no-sandbox','--disable-dev-shm-usage','--autoplay-policy=no-user-gesture-required']});}
+export async function pageAt(b,port=4173,width=1920){const p=await b.newPage();await p.setViewport({width,height:Math.round(width*9/16),deviceScaleFactor:1});p.on('pageerror',e=>console.error('BROWSER:',e.message));await p.goto(`http://127.0.0.1:${port}/?export&width=${width}`,{waitUntil:'networkidle0'});await p.waitForFunction(()=>window.film?.ready);return p;}

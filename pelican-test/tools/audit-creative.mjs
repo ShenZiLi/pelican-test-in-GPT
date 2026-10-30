@@ -1,0 +1,31 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {spawn} from 'node:child_process';
+import sharp from 'sharp';
+import {SCENES,smooth} from '../src/beat/timeline.js';
+const args=process.argv.slice(2),opt=(flag,fallback)=>args.includes(flag)?args[args.indexOf(flag)+1]:fallback;
+const movie=opt('--movie','exports/delivery/The_Pelican_Test_Gallery_1920x840.mp4');
+const out=opt('--out','exports/creative-audit');
+await fs.mkdir(path.join(out,'frames'),{recursive:true});
+const events=[];
+for(const s of SCENES)for(const local of [.25,1,1.75,2.25,2.75,3.25,4.5,5.5])events.push({id:s.id,key:s.key,zh:s.zh,local,t:s.start+local});
+for(const t of [2,4,88.5,88.8,89,89.2,90.9,91,91.25,91.49,91.5,97.4,97.5,97.75,127.5,134,136.6])events.push({id:0,key:'details',local:0,t});
+const frames=[...new Set(events.map(e=>Math.round(e.t*60)))].sort((a,b)=>a-b);
+const sum=parts=>parts.length===1?parts[0]:`(${sum(parts.slice(0,Math.floor(parts.length/2)))}+${sum(parts.slice(Math.floor(parts.length/2)))})`;
+await new Promise((resolve,reject)=>{const p=spawn('ffmpeg',['-y','-v','error','-i',movie,'-vf','select='+sum(frames.map(f=>`eq(n\\,${f})`)),'-fps_mode','vfr','-start_number','0',path.join(out,'frames','%03d.png')],{stdio:'inherit'});p.on('exit',c=>c?reject(Error(`ffmpeg ${c}`)):resolve());});
+const index=new Map(frames.map((f,i)=>[f,i]));
+const frame=e=>path.join(out,'frames',`${String(index.get(Math.round(e.t*60))).padStart(3,'0')}.png`);
+const overview=[];
+for(const s of SCENES){const list=events.filter(e=>e.id===s.id),layers=[];
+  for(let i=0;i<list.length;i++){const e=list[i],left=Math.max(0,Math.round(660-smooth((e.local-3.5)/2.5)*642-40));
+    const cut=await sharp(frame(e)).extract({left,top:20,width:680,height:780}).resize(340,390).png().toBuffer();
+    const stamp=Buffer.from(`<svg width="340" height="30"><rect width="340" height="30" fill="#182421"/><text x="12" y="21" font-size="16" fill="white" font-family="Arial">${String(s.id).padStart(2,'0')} / ${e.t.toFixed(2)}s / local ${e.local.toFixed(2)}s</text></svg>`);
+    layers.push({input:cut,left:i%4*340,top:Math.floor(i/4)*420},{input:stamp,left:i%4*340,top:Math.floor(i/4)*420+390});
+    if(i===4)overview.push({input:cut,left:(s.id-1)%5*340,top:Math.floor((s.id-1)/5)*420},{input:stamp,left:(s.id-1)%5*340,top:Math.floor((s.id-1)/5)*420+390});
+  }
+  await sharp({create:{width:1360,height:840,channels:3,background:'#eeeae0'}}).composite(layers).png().toFile(path.join(out,`${String(s.id).padStart(2,'0')}-${s.key}.png`));
+}
+await sharp({create:{width:1700,height:1680,channels:3,background:'#eeeae0'}}).composite(overview).png().toFile(path.join(out,'overview.png'));
+await fs.writeFile(path.join(out,'evidence.json'),JSON.stringify({movie,sha256:crypto.createHash('sha256').update(await fs.readFile(movie)).digest('hex'),frameCount:frames.length,events:events.map(e=>({...e,file:frame(e)}))},null,2));
+console.log(`${frames.length} decoded MP4 frames, 20 scene sequences and an overview saved to ${out}`);

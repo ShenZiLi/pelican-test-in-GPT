@@ -1,0 +1,18 @@
+export const metadata={title:'清明上河图',english:'ALONG THE RIVER',year:'约 1100'};
+const rnd=n=>{const x=Math.sin(n*19.73+8.31)*17387.31;return x-Math.floor(x);};let plate;
+function poly(c,p,f,s='#675b43',w=1.4){c.beginPath();p.forEach((v,i)=>i?c.lineTo(...v):c.moveTo(...v));c.closePath();c.fillStyle=f;c.fill();c.strokeStyle=s;c.lineWidth=w;c.stroke();}
+function house(c,x,y,w,h){c.fillStyle='#dbc49b';c.strokeStyle='#66583d';c.lineWidth=2;c.fillRect(x,y-h,w,h);c.strokeRect(x,y-h,w,h);poly(c,[[x-18,y-h+5],[x+w/2,y-h-44],[x+w+18,y-h+5]],'#807b60');for(let i=0;i<9;i++){let q=i/8;c.beginPath();c.moveTo(x-15+q*(w+30),y-h+2);c.lineTo(x+w/2+(q-.5)*20,y-h-37);c.stroke();}for(let i=0;i<4;i++){c.strokeRect(x+10+i*(w-20)/4,y-h+20,15,h-30);}c.strokeRect(x+w*.35,y-38,w*.3,38);}
+function person(c,x,y,colour,turn){c.save();c.translate(x,y);c.strokeStyle='#4f4938';c.lineWidth=2;c.fillStyle=colour;poly(c,[[-7,-32],[8,-32],[15,-3],[-13,-3]],colour);c.beginPath();c.moveTo(-5,-3);c.lineTo(-7,7);c.moveTo(6,-3);c.lineTo(8,7);c.stroke();c.fillStyle='#a68253';c.beginPath();c.ellipse(turn*3,-39,5,7,0,0,7);c.fill();c.fillStyle='#443f32';c.fillRect(-5+turn*3,-47,11,5);c.beginPath();c.moveTo(-7,-25);c.lineTo(-19,-16);c.moveTo(8,-25);c.lineTo(17,-15);c.stroke();c.restore();}
+function background(){const a=document.createElement('canvas');a.width=1778;a.height=1000;const c=a.getContext('2d');c.fillStyle='#e4d3ac';c.fillRect(0,0,1778,1000);for(let i=0;i<8500;i++){c.fillStyle=`rgba(105,83,44,${rnd(i)*.08})`;c.fillRect(rnd(i+7)*1778,rnd(i+11)*1000,2,1);}
+ c.fillStyle='#b8bea2';c.beginPath();c.moveTo(0,615);c.bezierCurveTo(600,450,1050,660,1778,505);c.lineTo(1778,1000);c.lineTo(0,1000);c.fill();
+ for(let i=0;i<430;i++){let x=rnd(i+3)*1778,y=600+rnd(i+9)*400;c.strokeStyle='rgba(82,105,88,.2)';c.lineWidth=1;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+12,y-4,x+34,y);c.stroke();}
+ for(let i=0;i<12;i++)house(c,-30+i*160,540+(i%3)*28,110+rnd(i)*40,110+rnd(i+4)*70);
+ for(let i=0;i<20;i++){const x=i*95,y=590+Math.sin(i)*25;c.strokeStyle='#5b6246';c.lineWidth=4;c.beginPath();c.moveTo(x,y);c.lineTo(x+10,y-120);c.stroke();for(let j=0;j<12;j++){c.strokeStyle='rgba(73,99,65,.7)';c.lineWidth=1.2;c.beginPath();c.moveTo(x+10,y-110);c.quadraticCurveTo(x-60+j*10,y-150,x-70+j*12,y-10);c.stroke();}}
+ // Original broad timber arch; the roadway joins the common baseline at both ends.
+ c.fillStyle='#a99165';c.beginPath();c.moveTo(0,790);c.lineTo(380,790);c.lineTo(1390,790);c.lineTo(1778,790);c.lineTo(1778,837);c.lineTo(1390,930);c.quadraticCurveTo(890,810,380,930);c.lineTo(0,837);c.fill();
+ for(let i=0;i<32;i++){const x=380+i*32,y=790;c.strokeStyle='#6f5e40';c.lineWidth=3;c.beginPath();c.moveTo(x,y);c.lineTo(x+25,y+140-100*Math.sin((x-380)/1010*Math.PI));c.stroke();c.beginPath();c.moveTo(x,y);c.lineTo(x,y-51);c.stroke();}
+ c.strokeStyle='#655338';c.lineWidth=4;c.beginPath();c.moveTo(0,740);c.lineTo(380,740);c.lineTo(1390,740);c.lineTo(1778,740);c.stroke();
+ for(let k=0;k<3;k++){let x=240+k*620,y=910-k%2*27;poly(c,[[x-150,y-40],[x+145,y-40],[x+110,y],[x-115,y]],'#8d7854');poly(c,[[x-80,y-43],[x-60,y-96],[x+55,y-96],[x+80,y-43]],'#c6b58a');for(let j=0;j<7;j++){c.beginPath();c.moveTo(x-60+j*18,y-93);c.lineTo(x-75+j*23,y-44);c.stroke();}c.beginPath();c.moveTo(x+115,y-37);c.lineTo(x+170,y-110);c.stroke();}
+ return a;}
+export function draw(c,u,env){plate??=background();c.drawImage(plate,0,0);for(let i=0;i<27;i++){const x=55+i*64;const y=777;person(c,x,y,['#898266','#ac7d59','#737d6d','#baa675'][i%4],u>2?Math.sign(env.riderX-x):0);}const y=780;env.rig(c,env.riderX,y,.62,env.t,{ink:'#5d5239',body:'#eee0b6',beak:'#ae8151',bike:'#5c654e',lineWidth:2});}
+

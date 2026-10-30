@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><title>Original score renderer</title>
+<p>Original procedural score renderer. No external audio inputs.</p>
+<script type="module">
+import {renderScore,renderVaporwave,audioAnalysis,createAudioEngine,SCORE_METADATA} from './engine.js';
+import {streamWav} from './wav.js';
+window.audioRender={renderScore,renderVaporwave,audioAnalysis,createAudioEngine,metadata:SCORE_METADATA,streamWav};
+</script>

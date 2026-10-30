@@ -1,0 +1,33 @@
+{
+  "publishedOn": "2026-10-30",
+  "timezone": "Asia/Shanghai",
+  "projects": [
+    {
+      "project": "pelican-test",
+      "modelConfiguration": "GPT 6.1 sol (High)",
+      "attribution": "Owner supplied",
+      "sourceCommit": "f0f4b1b24ccf31e31a90c54598c1de78d3bda7af",
+      "sourceBranch": "production",
+      "sourceWorktreeDirty": true,
+      "snapshot": "Current source files, including uncommitted changes; no history import"
+    },
+    {
+      "project": "pelican-test2",
+      "modelConfiguration": "GPT 6.1 sol (High) + Trellis",
+      "attribution": "Owner supplied",
+      "sourceCommit": "f1007728bfb0dc9ea2bca2c4ff0fab57c8a89ab1",
+      "sourceBranch": "feat/complete-film",
+      "sourceWorktreeDirty": false,
+      "snapshot": "Current source files, including uncommitted changes; no history import"
+    },
+    {
+      "project": "pelican-test3",
+      "modelConfiguration": "GPT 6 Astra (High)",
+      "attribution": "Owner supplied",
+      "sourceCommit": "ddb5962d31d2fbe011af03ac76e68ff20110deb6",
+      "sourceBranch": "codex/pelican-film",
+      "sourceWorktreeDirty": false,
+      "snapshot": "Current source files, including uncommitted changes; no history import"
+    }
+  ]
+}

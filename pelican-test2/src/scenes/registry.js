@@ -1,0 +1,24 @@
+import * as scene1 from './01-sahara.js';
+import * as scene2 from './02-egypt.js';
+import * as scene3 from './03-han-rubbing.js';
+import * as scene4 from './04-tang-line.js';
+import * as scene5 from './05-song-landscape.js';
+import * as scene6 from './06-qingming.js';
+import * as scene7 from './07-maya.js';
+import * as scene8 from './08-mughal.js';
+import * as scene9 from './09-bada.js';
+import * as scene10 from './10-wayang.js';
+import * as scene11 from './11-ukiyoe.js';
+import * as scene12 from './12-starry-night.js';
+import * as scene13 from './13-scream.js';
+import * as scene14 from './14-nosferatu.js';
+import * as scene15 from './15-oscilloscope.js';
+import * as scene16 from './16-pixel.js';
+import * as scene17 from './17-chat.js';
+import * as scene18 from './18-vaporwave.js';
+import * as scene19 from './19-vertical.js';
+import * as scene20 from './20-code.js';
+const renderers=new Map([[1,scene1],[2,scene2],[3,scene3],[4,scene4],[5,scene5],[6,scene6],[7,scene7],[8,scene8],[9,scene9],[10,scene10],[11,scene11],[12,scene12],[13,scene13],[14,scene14],[15,scene15],[16,scene16],[17,scene17],[18,scene18],[19,scene19],[20,scene20]]);
+export const rendererFor=number=>renderers.get(number);
+export const implementedSceneCount=renderers.size;
+export function prepareScenes({paper,brushAtlas}){const assets={};for(const[number,renderer]of renderers)assets[number]=renderer.createAssets?.({paper,brushAtlas})??{};return assets;}

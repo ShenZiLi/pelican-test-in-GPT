@@ -1,0 +1,16 @@
+**/node_modules/
+**/out/
+**/exports/
+**/frames/
+**/dist/
+**/build/
+**/.cache/
+**/__pycache__/
+**/*.log
+**/*.mp4
+**/*.wav
+**/*.zip
+**/.env
+**/.env.*
+**/.DS_Store
+**/Thumbs.db
